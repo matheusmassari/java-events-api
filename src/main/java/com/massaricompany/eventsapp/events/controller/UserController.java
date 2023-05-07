@@ -4,8 +4,15 @@ import com.massaricompany.eventsapp.events.dto.UserResponse;
 import com.massaricompany.eventsapp.events.exception.EmailAlreadyExistsException;
 import com.massaricompany.eventsapp.events.model.User;
 import com.massaricompany.eventsapp.events.service.user.UserService;
+import com.massaricompany.eventsapp.events.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,10 +24,31 @@ import java.util.stream.Collectors;
 public class UserController {
     private final UserService userService;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+    // Authenticate User
+    @PostMapping("/login")
+    public ResponseEntity<String> authenticateUser(@RequestBody User user) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String jwt = jwtUtil.generateToken(userDetails);
+        return ResponseEntity.ok(jwt);
+    }
+
+
 
     // Create or Update a User
 
