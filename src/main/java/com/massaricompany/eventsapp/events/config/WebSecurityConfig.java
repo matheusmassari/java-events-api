@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,8 +20,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.context.ApplicationContext;
-
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -57,12 +56,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(authenticationManager, jwtSecret, jwtExpirationMs, applicationContext);
-        filter.setAuthenticationManager(authenticationManager); // Set the authenticationManager explicitly
-        filter.setAuthenticationFailureHandler(authenticationFailureHandler());
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(authenticationManager, jwtSecret, jwtExpirationMs);
         return filter;
     }
-
 
 
     @Bean
@@ -102,13 +98,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/users/**").authenticated()
                 .antMatchers("/h2-console/**").permitAll() // Allow unauthenticated access to the H2 console
                 .and()
-                .addFilter(jwtAuthenticationFilter()) // Remove the argument here
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .headers().frameOptions().disable() // Disable security headers for the H2 console
-                .and()
-                .addFilter(jwtAuthenticationFilter()); // Remove the argument here
+                .headers().frameOptions().disable(); // Disable security headers for the H2 console
     }
 
 }

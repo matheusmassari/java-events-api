@@ -1,6 +1,6 @@
 package com.massaricompany.eventsapp.events.controller;
 
-import com.massaricompany.eventsapp.events.dto.UserResponse;
+import com.massaricompany.eventsapp.events.dto.userDto.UserResponse;
 import com.massaricompany.eventsapp.events.exception.EmailAlreadyExistsException;
 import com.massaricompany.eventsapp.events.model.User;
 import com.massaricompany.eventsapp.events.service.user.UserService;
@@ -9,10 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -37,21 +33,20 @@ public class UserController {
     }
 
     // Authenticate User
-    @PostMapping("/login")
-    public ResponseEntity<String> authenticateUser(@RequestBody User user) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String jwt = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(jwt);
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<String> authenticateUser(@RequestBody User user) {
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+//        );
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//        String jwt = jwtUtil.generateToken(userDetails);
+//        return ResponseEntity.ok(jwt);
+//    }
 
 
 
     // Create or Update a User
-
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<UserResponse> save(@Valid @RequestBody User user) {
 

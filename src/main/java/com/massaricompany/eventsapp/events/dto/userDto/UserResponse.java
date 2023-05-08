@@ -1,4 +1,4 @@
-package com.massaricompany.eventsapp.events.dto;
+package com.massaricompany.eventsapp.events.dto.userDto;
 
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
